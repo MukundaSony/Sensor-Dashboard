@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Data Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 250px;
+            text-align: center;
+        }
+        .card h3 {
+            margin-bottom: 10px;
+        }
+        .card p {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; padding: 10px; background: #007bff; color: white;">Sensor Dashboard</h1>
+    <div class="container" id="sensorContainer"></div>
+    
+    <script>
+        const sensors = [
+            { id: 1, name: "pH Sensor" },
+            { id: 2, name: "Smoke Sensor" },
+            { id: 3, name: "Temperature Sensor" },
+            { id: 4, name: "Humidity Sensor" },
+            { id: 5, name: "Light Sensor" },
+            { id: 6, name: "Pressure Sensor" },
+            { id: 7, name: "Motion Sensor" },
+            { id: 8, name: "Sound Sensor" }
+        ];
+
+        const container = document.getElementById('sensorContainer');
+
+        // Initialize cards
+        sensors.forEach(sensor => {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.id = `sensor-${sensor.id}`;
+            card.innerHTML = `<h3>${sensor.name}</h3><p>Loading...</p>`;
+            container.appendChild(card);
+        });
+
+        // Update sensor data in real-time
+        const updateSensorData = (id, value) => {
+            const card = document.getElementById(`sensor-${id}`);
+            if (card) {
+                card.querySelector('p').innerText = value;
+            }
+        };
+
+        // Simulate real-time data
+        const ws = new WebSocket('ws://localhost:3000');
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            updateSensorData(data.id, data.value);
+        };
+    </script>
+</body>
+</html>
